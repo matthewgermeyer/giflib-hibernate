@@ -7,10 +7,10 @@
 <div th:replace="layout :: flash"></div>
 <div class="row user-meta">
     <div class="col s3 l12">
-        <img class="circle" th:src="@{/images/me.jpg}" alt="avatar" />
+        <img class="circle" th:src="@{/images/matt.jpg}" alt="avatar" />
     </div>
     <div class="col s9= l12">
-        <h2 th:text="${username}">Jane Doe</h2>
+        <h2 th:text="${username}">Th:text= username</h2>
         <div class="meta" th:text="|${#lists.size(gifs)} Favorites|"></div>
     </div>
 </div>

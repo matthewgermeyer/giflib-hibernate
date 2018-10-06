@@ -41,7 +41,7 @@
         </div>
     </form>
     <!--If category.id is not null, show a delete button-->
-    <div class="row delete" th:id="${category.id != null}">
+    <div class="row delete" th:if="${category.id != null}">
         <div class="col s12 l8">
             <form th:action="@{|/categories/${category.id}/delete|}" method="post">
                 <button type="submit" class="button">Delete</button>

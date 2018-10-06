@@ -13,70 +13,75 @@ import javax.persistence.criteria.CriteriaQuery;
 
 @Repository
 public class CategoryDaoImpl implements CategoryDao {
-    @Autowired
-    private SessionFactory sessionFactory;
+  @Autowired
+  private SessionFactory sessionFactory;
 
-    @Override
-    @SuppressWarnings("unchecked")
-    public List<Category> findAll() {
-        // Open a session
-        Session session = sessionFactory.openSession();
+  @Override
+  @SuppressWarnings("unchecked")
+  public List<Category> findAll() {
+    // Open a session
+    Session session = sessionFactory.openSession();
 
-        // DEPRECATED as of Hibernate 5.2.0
-        // List<Category> categories = session.createCriteria(Category.class).list();
+    // DEPRECATED as of Hibernate 5.2.0
+    // List<Category> categories = session.createCriteria(Category.class).list();
 
-        // Create CriteriaBuilder
-        CriteriaBuilder builder = session.getCriteriaBuilder();
+    // Create CriteriaBuilder
+    CriteriaBuilder builder = session.getCriteriaBuilder();
 
-        // Create CriteriaQuery
-        CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
+    // Create CriteriaQuery
+    CriteriaQuery<Category> criteria = builder.createQuery(Category.class);
 
-        // Specify criteria root
-        criteria.from(Category.class);
+    // Specify criteria root
+    criteria.from(Category.class);
 
-        // Execute query
-        List<Category> categories = session.createQuery(criteria).getResultList();
+    // Execute query
+    List<Category> categories = session.createQuery(criteria).getResultList();
 
-        // Close session
-        session.close();
+    // Close session
+    session.close();
 
-        return categories;
-    }
+    return categories;
+  }
 
-    @Override
-    public Category findById(Long id) {
-        Session session = sessionFactory.openSession();
-        Category category = session.get(Category.class, id);
-        Hibernate.initialize(category.getGifs());
-        session.close();
-        return category;
-    }
+  @Override
+  public Category findById(Long id) {
+    Session session = sessionFactory.openSession();
+    Category category = session.get(Category.class, id);
+    //Gifs collection will initialize before sessions closes.
+    //prevents attempts to view a mapped collection outside of
+    //the Hibernate session.  (Lazy loading issue).
+    //TODO: Read the docs on this for more details.
+    Hibernate.initialize(category.getGifs());
+    session.close();
+    return category;
+  }
 
-    @Override
-    public void save(Category category) {
-        // Open a session
-        Session session = sessionFactory.openSession();
+  @Override
+  public void save(Category category) {
+    // Open a session
+    Session session = sessionFactory.openSession();
 
-        // Begin a transaction
-        session.beginTransaction();
+    // Begin a transaction
+    session.beginTransaction();
 
-        // Save the category
-        // We use saveOrUpdate so that an edit will not create a new object in the database.
-        session.saveOrUpdate(category);
+    // Save the category
+    // We use saveOrUpdate so that an edit will not create a new object in the database.
+    session.saveOrUpdate(category);
 
-        // Commit the transaction
-        session.getTransaction().commit();
+    // Commit the transaction
+    session.getTransaction().commit();
 
-        // Close the session
-        session.close();
-    }
+    // Close the session
+    session.close();
+  }
 
-    @Override
-    public void delete(Category category) {
-        Session session = sessionFactory.openSession();
-        session.beginTransaction();
-        session.delete(category);
-        session.getTransaction().commit();
-        session.close();
-    }
+  @Override
+  public void delete(Category category) {
+
+    Session session = sessionFactory.openSession();
+    session.beginTransaction();
+    session.delete(category);
+    session.getTransaction().commit();
+    session.close();
+  }
 }

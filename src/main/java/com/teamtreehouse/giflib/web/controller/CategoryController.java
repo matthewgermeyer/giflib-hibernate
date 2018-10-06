@@ -1,5 +1,6 @@
 package com.teamtreehouse.giflib.web.controller;
 
+import com.teamtreehouse.giflib.exc.CategoryNotEmptyException;
 import com.teamtreehouse.giflib.model.Category;
 import com.teamtreehouse.giflib.service.CategoryService;
 import com.teamtreehouse.giflib.web.Color;
@@ -129,7 +130,13 @@ public class CategoryController {
             redirectAttributes.addFlashAttribute("flash",new FlashMessage("Only empty categories can be deleted.", FlashMessage.Status.FAILURE));
             return String.format("redirect:/categories/%s/edit",categoryId);
         }
-        categoryService.delete(cat);
+        try {
+            categoryService.delete(cat);
+        } catch (CategoryNotEmptyException cnee){
+            System.out.println(cnee.getMessage());
+            cnee.printStackTrace();
+        }
+
         redirectAttributes.addFlashAttribute("flash",new FlashMessage("Category deleted!", FlashMessage.Status.SUCCESS));
 
         return "redirect:/categories";

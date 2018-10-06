@@ -1,6 +1,7 @@
 package com.teamtreehouse.giflib.service;
 
 import com.teamtreehouse.giflib.dao.CategoryDao;
+import com.teamtreehouse.giflib.exc.CategoryNotEmptyException;
 import com.teamtreehouse.giflib.model.Category;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -29,6 +30,10 @@ public class CategoryServiceImpl implements CategoryService {
 
     @Override
     public void delete(Category category) {
+        //Throw custom Exc if delete is called on a cat with gifs in it
+        if (category.getGifs().size() > 0) {
+            throw new CategoryNotEmptyException();
+        }
         categoryDao.delete(category);
     }
 }
