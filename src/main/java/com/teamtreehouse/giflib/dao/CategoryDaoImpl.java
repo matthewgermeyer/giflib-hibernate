@@ -7,9 +7,9 @@ import org.hibernate.SessionFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
-import java.util.List;
 
 @Repository
 public class CategoryDaoImpl implements CategoryDao {
@@ -46,7 +46,7 @@ public class CategoryDaoImpl implements CategoryDao {
     @Override
     public Category findById(Long id) {
         Session session = sessionFactory.openSession();
-        Category category = session.get(Category.class,id);
+        Category category = session.get(Category.class, id);
         Hibernate.initialize(category.getGifs());
         session.close();
         return category;
@@ -61,6 +61,7 @@ public class CategoryDaoImpl implements CategoryDao {
         session.beginTransaction();
 
         // Save the category
+        // We use saveOrUpdate so that an edit will not create a new object in the database.
         session.saveOrUpdate(category);
 
         // Commit the transaction

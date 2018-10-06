@@ -7,13 +7,19 @@ import com.teamtreehouse.giflib.web.FlashMessage;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import javax.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.List;
+import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 @Controller
 public class GifController {
@@ -26,7 +32,7 @@ public class GifController {
     // Home page - index of all GIFs
     @RequestMapping("/")
     public String listGifs(Model model) {
-        // TODO: Get all gifs
+
         List<Gif> gifs = gifService.findAll();
 
         model.addAttribute("gifs", gifs);
@@ -36,7 +42,7 @@ public class GifController {
     // Single GIF page
     @RequestMapping("/gifs/{gifId}")
     public String gifDetails(@PathVariable Long gifId, Model model) {
-        // TODO: Get gif whose id is gifId
+        //Get gif whose id is gifId
         Gif gif = gifService.findById(gifId);
 
         model.addAttribute("gif", gif);
@@ -47,7 +53,7 @@ public class GifController {
     @RequestMapping("/gifs/{gifId}.gif")
     @ResponseBody
     public byte[] gifImage(@PathVariable Long gifId) {
-        // TODO: Return image data as byte array of the GIF whose id is gifId
+        //Return image data as byte array of the GIF whose id is gifId
         return gifService.findById(gifId).getBytes();
     }
 
@@ -64,21 +70,33 @@ public class GifController {
 
     // Upload a new GIF
     @RequestMapping(value = "/gifs", method = RequestMethod.POST)
-    public String addGif(Gif gif, @RequestParam MultipartFile file, RedirectAttributes redirectAttributes) {
-        // TODO: Upload new GIF if data is valid
+    public String addGif(@Valid Gif gif, @RequestParam MultipartFile file, RedirectAttributes redirectAttributes, BindingResult result) {
+
+        if (result.hasErrors()) {
+            // Include validation errors upon redirect
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.gif",result);
+
+            // Add  category if invalid was received
+            redirectAttributes.addFlashAttribute("gif",gif);
+
+            // Redirect back to the form
+            return String.format("redirect:/gifs/%s/edit",gif.getId());
+
+        }
+        //Upload new GIF if data is valid
         gifService.save(gif,file);
 
         // Add flash message for success
         redirectAttributes.addFlashAttribute("flash",new FlashMessage("GIF successfully uploaded!", FlashMessage.Status.SUCCESS));
 
-        // TODO: Redirect browser to new GIF's detail view
+        //Redirect browser to new GIF's detail view
         return String.format("redirect:/gifs/%s",gif.getId());
     }
 
     // Form for uploading a new GIF
     @RequestMapping("/upload")
     public String formNewGif(Model model) {
-        // TODO: Add model attributes needed for new GIF upload form
+        // check if model has a "gif" in it (from validation check failed -> redirect)
         if(!model.containsAttribute("gif")) {
             model.addAttribute("gif",new Gif());
         }
@@ -107,10 +125,20 @@ public class GifController {
 
     // Update an existing GIF
     @RequestMapping(value = "/gifs/{gifId}", method = RequestMethod.POST)
-    public String updateGif(Gif gif, @RequestParam MultipartFile file, RedirectAttributes redirectAttributes) {
+    public String updateGif(@Valid Gif gif, @RequestParam MultipartFile file, RedirectAttributes redirectAttributes, BindingResult result) {
         // TODO: Update GIF if data is valid
-        gifService.save(gif,file);
+        if (result.hasErrors()) {
+            // Include validation errors upon redirect
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.category",result);
 
+            // Add  category if invalid was received
+            redirectAttributes.addFlashAttribute("gif",gif);
+
+            // Redirect back to the form
+            return String.format("redirect:/gifs/%s/edit",gif.getId());
+
+        }
+        gifService.save(gif,file);
         // Flash message
         redirectAttributes.addFlashAttribute("flash",new FlashMessage("GIF successfully updated!", FlashMessage.Status.SUCCESS));
 
