@@ -4,6 +4,8 @@
 <body>
 <div th:replace="layout :: nav"></div>
 <div th:replace="layout :: flash"></div>
+<!-- boilerplate -->
+
 <div class="container">
     <form th:action="@{${action}}" method="post" th:object="${category}">
         <input type="hidden" th:field="*{id}"/>
@@ -13,6 +15,7 @@
             </div>
         </div>
         <div class="divider"></div>
+        <!--Name field-->
         <div class="row">
             <div class="col s12 l8" th:classappend="${#fields.hasErrors('name')}? 'error' : ''">
                 <input type="text" th:field="*{name}" placeholder="Category Name"/>
@@ -20,6 +23,7 @@
                      th:errors="*{name}"></div>
             </div>
         </div>
+
         <div class="row">
             <div class="col s12 l8"
                  th:classappend="${#fields.hasErrors('colorCode')}? 'error' : ''">
@@ -33,6 +37,8 @@
                      th:errors="*{colorCode}"></div>
             </div>
         </div>
+
+        <!--Submit and Cancel-->
         <div class="row">
             <div class="col s12 l8">
                 <button th:text="${submit}" type="submit" class="button">Add</button>
@@ -48,7 +54,10 @@
             </form>
         </div>
     </div>
+
 </div>
+
+<!-- boilerplate -->
 <div th:replace="layout :: scripts"></div>
 </body>
 </html>

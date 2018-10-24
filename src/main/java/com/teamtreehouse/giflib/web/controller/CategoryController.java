@@ -59,42 +59,6 @@ public class CategoryController {
         return "category/form";
     }
 
-    // Form for editing an existing category
-    @RequestMapping("categories/{categoryId}/edit")
-    public String formEditCategory(@PathVariable Long categoryId, Model model) {
-        //Add model attributes needed for new form
-        if(!model.containsAttribute("category")) {
-            model.addAttribute("category",categoryService.findById(categoryId));
-        }
-        model.addAttribute("colors", Color.values());
-        model.addAttribute("action",String.format("/categories/%s",categoryId));
-        model.addAttribute("heading","Edit Category");
-        model.addAttribute("submit","Update");
-
-        return "category/form";
-    }
-
-    // Update an existing category
-    @RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.POST)
-    public String updateCategory(@Valid Category category, BindingResult result, RedirectAttributes redirectAttributes) {
-
-        if(result.hasErrors()) {
-            // Include validation errors upon redirect
-            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.category",result);
-
-            // Add  category if invalid was received
-            redirectAttributes.addFlashAttribute("category",category);
-
-            // Redirect back to the form
-            return String.format("redirect:/categories/%s/edit",category.getId());
-        }
-
-        categoryService.save(category);
-
-        redirectAttributes.addFlashAttribute("flash",new FlashMessage("Category successfully updated!", FlashMessage.Status.SUCCESS));
-
-        return "redirect:/categories";
-    }
 
     // Add a category
     @RequestMapping(value = "/categories", method = RequestMethod.POST)
@@ -119,6 +83,45 @@ public class CategoryController {
         //redirect to categories index
         return "redirect:/categories";
     }
+
+    // Form for editing an existing category
+    @RequestMapping("categories/{categoryId}/edit")
+    public String formEditCategory(@PathVariable Long categoryId, Model model) {
+        //Add model attributes needed for new form
+        if(!model.containsAttribute("category")) {
+            model.addAttribute("category",categoryService.findById(categoryId));
+        }
+        model.addAttribute("colors", Color.values());
+        model.addAttribute("action",String.format("/categories/%s",categoryId));
+        model.addAttribute("heading","Edit Category");
+        model.addAttribute("submit","Update");
+
+        return "category/form";
+    }
+
+
+    // Update an existing category
+    @RequestMapping(value = "/categories/{categoryId}", method = RequestMethod.POST)
+    public String updateCategory(@Valid Category category, BindingResult result, RedirectAttributes redirectAttributes) {
+
+        if(result.hasErrors()) {
+            // Include validation errors upon redirect
+            redirectAttributes.addFlashAttribute("org.springframework.validation.BindingResult.category",result);
+
+            // Add  category if invalid was received
+            redirectAttributes.addFlashAttribute("category",category);
+
+            // Redirect back to the form
+            return String.format("redirect:/categories/%s/edit",category.getId());
+        }
+
+        categoryService.save(category);
+
+        redirectAttributes.addFlashAttribute("flash",new FlashMessage("Category successfully updated!", FlashMessage.Status.SUCCESS));
+
+        return "redirect:/categories";
+    }
+
 
     // Delete an existing category
     @RequestMapping(value = "/categories/{categoryId}/delete", method = RequestMethod.POST)

@@ -4,11 +4,15 @@
 <body>
 <div th:replace="layout :: nav"></div>
 <div th:replace="layout :: flash"></div>
+<!-- boilerplate -->
+
 <div class="container upload">
     <div class="row">
         <div class="col s12">
             <h2 th:text="${heading}">Upload</h2>
-            <div class="subtitle">Upload and share your GIFs with friends and family on Facebook, Twitter, and everywhere else.</div>
+            <div class="subtitle">Upload and share your GIFs with friends and family on Facebook,
+                                  Twitter, and everywhere else.
+            </div>
         </div>
     </div>
     <div class="divider"></div>
@@ -23,19 +27,29 @@
                 </div>
             </div>
         </div>
+
+        <!--Description-->
         <div class="row">
             <div class="col s12 l8">
                 <input type="text" th:field="*{description}" placeholder="Description"/>
             </div>
         </div>
+
+        <!--Category select-->
         <div class="row">
             <div class="col s12 l8">
                 <select th:field="*{category.id}" class="cs-select cs-skin-border">
                     <option value="" disabled="disabled">Select a category</option>
-                    <option th:each="cat : ${categories}" th:value="${cat.id}" th:text="${cat.name}" th:style="|color:${cat.colorCode}|">Technology</option>
+                    <option th:each="cat : ${categories}"
+                            th:value="${cat.id}"
+                            th:text="${cat.name}"
+                            th:style="|color:${cat.colorCode}|">Technology
+                    </option>
                 </select>
             </div>
         </div>
+
+        <!--Submit and cancel buttons-->
         <div class="row">
             <div class="col s12">
                 <button th:text="${submit}" type="submit" class="button">Upload</button>
@@ -44,6 +58,8 @@
         </div>
     </form>
 </div>
+
+<!-- boilerplate -->
 <div th:replace="layout :: scripts"></div>
 </body>
 </html>
